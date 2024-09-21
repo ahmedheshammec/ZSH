@@ -72,6 +72,20 @@ expand-m4a() {
   fi
 }
 
+# Merge Movie with Subtitle
+expand-sub() {
+  local buffer="$BUFFER"
+  if [[ $buffer =~ '~sub$' ]]; then
+    # Seed the RANDOM variable with the current time
+    RANDOM=$(( $(date +%s) % 32768 ))
+    # Generate a random 5-digit number
+    randomNumber=$(printf "%05d" $((RANDOM % 100000)))
+    # Modify the BUFFER to include the random number
+    BUFFER="i= ; ffpb -i \$i -vf \"subtitles=subtitle.srt:force_style='FontName=GE Aridi Naskh,FontSize=20'\" \"\${i%.*}_${randomNumber}.mp4\""
+    CURSOR=2  # Move the cursor to the position
+  fi
+}
+
 
 expand-levels() {
   local buffer="$BUFFER"
@@ -223,6 +237,7 @@ expand-snippets() {
   expand-upload
   expand-del
   expand-total-size
+  expand-sub
 }
 # Note: The Functions Naming Must Be Not the Same as a Command
 
