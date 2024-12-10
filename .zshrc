@@ -1,3 +1,8 @@
+# alias yt-dlp="/usr/local/bin/yt-dlp_macos"
+
+export PATH="/usr/local/bin:$PATH"
+
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -127,8 +132,12 @@ export PATH="$PATH:/Applications/PyCharm.app/Contents/MacOS/"
 
 #Aliases
 alias md='mkdir'
-alias yt-dlp="/usr/local/bin/yt-dlp_macos"
 
+
+alias cd-o="cd '/Volumes/Samsung T5/Ollama/'"
+
+alias ~buffer="tmux show-buffer | pbcopy"
+    
 
 
 # Activate `myscripts` Environmental Variable
@@ -208,7 +217,7 @@ premiere() {
         cp "$template_path" "$file_path"
     fi
     
-    open -a "/Volumes/Samsung T5/Apps Installed (To Free Space)/Adobe Premiere Pro 2024/Adobe Premiere Pro 2024.app" "$file_path"
+    open -a "/Applications/Adobe Premiere Pro 2022/Adobe Premiere Pro 2022.app" "$file_path"
 }
 
 
@@ -232,16 +241,17 @@ aep() {
         cp -R "$template_path" "$file_path"
     fi
     
-    open -a "/Volumes/Samsung T5/Apps Installed (To Free Space)/Adobe After Effects 2024/Adobe After Effects 2024.app" "$file_path"
+    open -a "/Applications/Adobe After Effects 2024/Adobe After Effects 2024.app" "$file_path"
 }
 
 
 
 
-# Pyenv
-export PATH="$PATH:/opt/homebrew/Cellar/pyenv/2.4.12/bin/"
+# # Pyenv
+export PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
+
 
 
 # Kill Whole Line 
@@ -267,3 +277,21 @@ export NVM_DIR="$HOME/.nvm"
 export WEBUI_AUTH=False
 
 
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/ahmed/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/ahmed/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/ahmed/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/ahmed/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+# postgresql
+export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"

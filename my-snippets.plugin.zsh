@@ -58,6 +58,20 @@ expand-ffpb-Divide() {
   fi
 }
 
+# Change Video Dimentions Using Divide and Ceil
+expand-ffpb-Divide-ceil() {
+  local buffer="$BUFFER"
+  if [[ $buffer =~ '~ffpb/f$' ]]; then
+    # Seed the RANDOM variable with the current time
+    RANDOM=$(( $(date +%s) % 32768 ))
+    # Generate a random 5-digit number
+    randomNumber=$(printf "%05d" $((RANDOM % 100000)))
+    # Modify the BUFFER to include the random number
+    BUFFER="i= ; ffpb -i \$i -vf \"scale=ceil(iw/2/2)*2:ceil(ih/2/2)*2\" \"\${i%.*}_${randomNumber}.mp4\""
+    CURSOR=2  # Move the cursor to the position
+  fi
+}
+
 
 expand-m4a() {
   local buffer="$BUFFER"
@@ -212,8 +226,16 @@ expand-frames() {
 expand-upload() {
   local buffer="$BUFFER"
   if [[ $buffer =~ '~upload$' ]]; then
-    BUFFER="i=  ; curl --progress-bar --no-buffer -F \"file=@\$i\" https://file.io | tee >(jq)"
+    BUFFER="i= ; curl -F \"file=@\$i\" https://store1.gofile.io/uploadFile | tee >(jq)"
     CURSOR=2  # Move the cursor to the position
+  fi
+}
+
+# Convert EPS Files in the current directory to PNG
+expand-epstopng() {
+  local buffer="$BUFFER"
+  if [[ $buffer =~ '~epstopng$' ]]; then
+    BUFFER="find . -type f -name '*.eps' -exec gs -dSAFER -dBATCH -dNOPAUSE -dEPSCrop -sDEVICE=png16m -r600 \"-sOutputFile={}.png\" {} \;"
   fi
 }
 
@@ -238,6 +260,8 @@ expand-snippets() {
   expand-del
   expand-total-size
   expand-sub
+  expand-ffpb-Divide-ceil
+  expand-epstopng
 }
 # Note: The Functions Naming Must Be Not the Same as a Command
 
