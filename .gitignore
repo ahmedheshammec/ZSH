@@ -1,0 +1,10 @@
+# Ignore everything in the home directory
+/*
+
+# Allow specific files
+!.zshrc
+!my-snippets.plugin.zsh
+!README.md
+
+# Exclude the `.gitignore` file itself from being ignored
+!.gitignore
