@@ -135,8 +135,32 @@ alias md='mkdir'
 
 
 alias cd-o="cd '/Volumes/Samsung T5/Ollama/'"
+alias cd-odoo17="cd '/Users/ahmed/Documents/odoo-17'"
+alias cd-odoo16="cd /Users/ahmed/Documents/odoo.16.0/"
+
+# Desktop
+alias cdd="cd ~/Desktop"
+
+# Documents
+alias cdc="cd ~/Documents"
+
+# Downloads
+alias cddo="cd ~/Downloads"
+
+# Movies
+alias cdm="cd ~/Movies"
+
+alias cd-noto="cd /Users/ahmed/Documents/Obsidian/Noto/"
+
+alias co-z="code ~/.zshrc"
+alias co-s="code ~/my-snippets.plugin.zsh"
+
+alias eject="diskutil unmount force"
+
 
 alias ~buffer="tmux show-buffer | pbcopy"
+
+alias open-brave="open -a 'Brave Browser.app' --args --disable-brave-update"
     
 
 

@@ -86,6 +86,22 @@ expand-m4a() {
   fi
 }
 
+
+expand-mp3() {
+  local buffer="$BUFFER"
+  if [[ $buffer =~ '~mp3$' ]]; then
+    # Seed the RANDOM variable with the current time
+    RANDOM=$(( $(date +%s) % 32768 ))
+    # Generate a random 5-digit number
+    randomNumber=$(printf "%05d" $((RANDOM % 100000)))
+    # Modify the BUFFER to include the random number
+    BUFFER="i= ; ffpb -i \$i \"\${i%.*}_${randomNumber}.mp3\""
+    CURSOR=2  # Move the cursor to the position
+  fi
+}
+
+
+
 # Merge Movie with Subtitle
 expand-sub() {
   local buffer="$BUFFER"
@@ -136,6 +152,7 @@ pdf-to-png() {
     CURSOR=2  # Move the cursor to the position
   fi
 }
+
 
 
 # Delete All Files with a Specific Extension in the Working Directory Recursively (Including Sub-Directories)
@@ -245,6 +262,7 @@ expand-epstopng() {
 expand-snippets() {
   expand-mp4
   expand-m4a
+  expand-mp3
   expand-levels
   pdf-to-png
   atomic-parsley
