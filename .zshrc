@@ -1,5 +1,4 @@
-# alias yt-dlp="/usr/local/bin/yt-dlp_macos"
-
+source /Applications/Ghostty.app/Contents/Resources/ghostty/shell-integration/zsh/ghostty-integration
 export PATH="/usr/local/bin:$PATH"
 
 
@@ -134,9 +133,11 @@ export PATH="$PATH:/Applications/PyCharm.app/Contents/MacOS/"
 alias md='mkdir'
 
 
-alias cd-o="cd '/Volumes/Samsung T5/Ollama/'"
-alias cd-odoo17="cd '/Users/ahmed/Documents/odoo-17'"
-alias cd-odoo16="cd /Users/ahmed/Documents/odoo.16.0/"
+alias cd-ollama="cd '/Volumes/Samsung T5/Ollama/'"
+alias cd-odoo18="cd '/Volumes/Samsung T5/Odoo/Development & Study/odoo-18.0/'"
+alias cd-odoo17="cd '/Volumes/Samsung T5/Odoo/Development & Study/odoo-17/'"
+alias cd-odoo16="cd /Volumes/Samsung T5/Odoo/Development & Study/odoo.16.0/"
+alias cd-odoo="cd /Users/ahmed/Documents/odoo-development/"
 
 # Desktop
 alias cdd="cd ~/Desktop"
@@ -145,18 +146,44 @@ alias cdd="cd ~/Desktop"
 alias cdc="cd ~/Documents"
 
 # Downloads
-alias cddo="cd ~/Downloads"
+alias cdw="cd ~/Downloads"
 
 # Movies
-alias cdm="cd ~/Movies"
+alias cdv="cd ~/Movies"
+
+# Music
+alias cds="cd ~/Music"
 
 alias cd-noto="cd /Users/ahmed/Documents/Obsidian/Noto/"
 
 alias co-z="code ~/.zshrc"
 alias co-s="code ~/my-snippets.plugin.zsh"
 
-alias eject="diskutil unmount force"
+alias cpcp="rsync -ah --info=progress2"
 
+alias list_db='cd ~/Desktop && psql -U postgres -c "\l" > databases_and_users.txt && psql -U postgres -c "\du" >> databases_and_users.txt'
+
+modules() {
+    printf "modules_to_install = [\n%s\n]" "$(ls -d */ | sed "s#/##" | awk '{printf "    \047%s\047,\n", $0}' | sed '$s/,$//')"| pbcopy
+}
+
+list_usrs() {
+  local db="$1"
+  cd ~/Desktop || return
+  psql -U postgres -d "$db" -c "SELECT login FROM res_users;" > "${db}_users.txt"
+}
+
+db_pass() {
+  local db="$1"
+  local usr="$2"
+  cd  || return
+  psql -U postgres -d "$db" -c "update res_users set password = 'admin' where login = '${usr}';" | cat
+}
+
+ej() {
+  local disk="$1"
+  diskutil unmount force "${disk}" >/dev/null
+}
 
 alias ~buffer="tmux show-buffer | pbcopy"
 
@@ -241,7 +268,7 @@ premiere() {
         cp "$template_path" "$file_path"
     fi
     
-    open -a "/Applications/Adobe Premiere Pro 2022/Adobe Premiere Pro 2022.app" "$file_path"
+    open -a "/Volumes/Samsung T5/Apps Installed (To Free Space)/Adobe Premiere Pro 2025/Adobe Premiere Pro 2025.app" "$file_path"
 }
 
 
@@ -265,7 +292,7 @@ aep() {
         cp -R "$template_path" "$file_path"
     fi
     
-    open -a "/Applications/Adobe After Effects 2024/Adobe After Effects 2024.app" "$file_path"
+    open -a "/Volumes/Samsung T5/Apps Installed (To Free Space)/Adobe After Effects 2025/Adobe After Effects 2025.app" "$file_path"
 }
 
 
@@ -319,4 +346,10 @@ unset __conda_setup
 
 # postgresql
 export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
+
+export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+
+
+# Gemini API
+export GEMINI_API_KEY=AIzaSyBbttyPZggV_VFOkpze_W5RPP2IqteFkNoexport PATH="$HOME/.local/bin:$PATH"
 

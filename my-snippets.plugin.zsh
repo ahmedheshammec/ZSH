@@ -106,12 +106,7 @@ expand-mp3() {
 expand-sub() {
   local buffer="$BUFFER"
   if [[ $buffer =~ '~sub$' ]]; then
-    # Seed the RANDOM variable with the current time
-    RANDOM=$(( $(date +%s) % 32768 ))
-    # Generate a random 5-digit number
-    randomNumber=$(printf "%05d" $((RANDOM % 100000)))
-    # Modify the BUFFER to include the random number
-    BUFFER="i= ; ffpb -i \$i -vf \"subtitles=subtitle.srt:force_style='FontName=GE Aridi Naskh,FontSize=20'\" \"\${i%.*}_${randomNumber}.mp4\""
+    BUFFER="i= ; ffpb -i \$i -vf \"subtitles=subtitle.srt:force_style='FontName=GE Aridi Naskh,FontSize=20'\" \"subbed.mp4\""
     CURSOR=2  # Move the cursor to the position
   fi
 }
@@ -184,6 +179,20 @@ expand-tree() {
   fi
 }
 
+# Brew Command Snippet, To download casks to Desktop 
+expand-brew() {
+  local buffer="$BUFFER"
+  if [[ $buffer =~ '~brew$' ]]; then
+    BUFFER='cask_name=""; brew fetch --cask "$cask_name" && \
+    dmg_file=$(find "$(brew --cache)/downloads" -type f -name "*.dmg" | grep -i "$cask_name" | head -1); \
+    if [[ -n "$dmg_file" ]]; then \
+      mv "$dmg_file" ~/Desktop/ && echo "Moved to Desktop: $(basename "$dmg_file")"; \
+    else \
+      echo "DMG file for $cask_name not found"; \
+    fi'
+    CURSOR=11  # Move the cursor to the position
+  fi
+}
 
 # AtomicParsley
 atomic-parsley() {
@@ -202,6 +211,22 @@ expand-count() {
     CURSOR=31  # Move the cursor to the position
   fi
 }
+
+
+# Expand `~ollama` to retry loop with cursor at model name
+expand-ollama() {
+  local buffer="$BUFFER"
+  if [[ $buffer =~ '~ollama$' ]]; then
+    BUFFER='while ! ollama run ; do
+  echo "Command Failed. Retrying..."
+  sleep 1
+done'
+    # Position cursor right after `ollama run `
+    CURSOR=19  # 12 chars before + "ollama run " = 19
+  fi
+}
+
+
 
 # Source ZSHRC File with a Snippet
 expand-source() {
@@ -280,6 +305,8 @@ expand-snippets() {
   expand-sub
   expand-ffpb-Divide-ceil
   expand-epstopng
+  expand-brew
+  expand-ollama
 }
 # Note: The Functions Naming Must Be Not the Same as a Command
 
