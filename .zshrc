@@ -159,8 +159,6 @@ alias cd-noto="cd /Users/ahmed/Documents/Obsidian/Noto/"
 alias co-z="code ~/.zshrc"
 alias co-s="code ~/my-snippets.plugin.zsh"
 
-alias cpcp="rsync -ah --info=progress2"
-
 alias list_db='cd ~/Desktop && psql -U postgres -c "\l" > databases_and_users.txt && psql -U postgres -c "\du" >> databases_and_users.txt'
 
 modules() {
@@ -184,6 +182,66 @@ ej() {
   local disk="$1"
   diskutil unmount force "${disk}" >/dev/null
 }
+
+
+tmux_source() {
+    # This will start new shell instances in each pane, completely fresh
+    tmux list-panes -F '#{pane_id}' | xargs -I {} tmux send-keys -t {} 'exec zsh' Enter
+}
+
+tmux_clear() {
+    # Send clear command to all panes in current window
+    tmux list-panes -F '#{pane_id}' | xargs -I {} tmux send-keys -t {} C-l
+}
+
+
+
+read_xlsx() {
+    local file_path="$1"
+    python3 -c "import pandas as pd; pd.set_option('display.max_columns', None); pd.set_option('display.max_rows', None); print(pd.read_excel('${file_path}'))"
+}
+
+
+
+
+# NVM & NPM Comparison
+# ~/.zshrc  (or any file sourced by ~/.zshrc)
+nv() {
+  # ── current versions --------------------------------------------------------
+  local cur_node cur_npm cur_nvm
+  cur_node=$(node -v 2>/dev/null) || cur_node="—"
+  cur_npm=$(npm -v 2>/dev/null)   || cur_npm="—"
+  cur_nvm=$(nvm --version 2>/dev/null) || cur_nvm="—"
+
+  # ── latest versions ---------------------------------------------------------
+  local lat_node lat_npm lat_nvm
+  lat_node=$(curl -s https://nodejs.org/dist/latest/ | sed -n 's/.*node-\([0-9.]*\)\.tar\.gz.*/\1/p')
+  lat_npm=$(npm view npm version 2>/dev/null)
+  lat_nvm=$(curl -s https://api.github.com/repos/nvm-sh/nvm/releases/latest | grep tag_name | cut -d'"' -f4)
+
+  # ── pretty table ------------------------------------------------------------
+  printf "\n%10s │ %15s │ %15s\n" "tool" "current" "latest"
+  printf "%10s─┼─%15s─┼─%15s\n" "──────────" "───────────────" "───────────────"
+  printf "%10s │ %15s │ %15s\n" "node" "${cur_node#v}" "$lat_node"
+  printf "%10s │ %15s │ %15s\n" "npm"  "$cur_npm" "$lat_npm"
+  printf "%10s │ %15s │ %15s\n" "nvm"  "${cur_nvm#v}" "${lat_nvm#v}"
+
+  # ── upgrade hint ------------------------------------------------------------
+  local hints=()
+  [[ ${cur_node#v} != "$lat_node" ]] && hints+=("nvm install $lat_node && nvm alias default $lat_node")
+  [[ $cur_npm != "$lat_npm" ]]       && hints+=("npm install -g npm@$lat_npm")
+  [[ ${cur_nvm#v} != "${lat_nvm#v}" ]] && hints+=('curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/'"$lat_nvm"'/install.sh | bash')
+
+  if (( ${#hints} )); then
+    printf "\n💡  run:\n"
+    printf "   %s\n" "${hints[@]}"
+  else
+    printf "\n✅  everything is up-to-date.\n"
+  fi
+}
+
+
+
 
 alias ~buffer="tmux show-buffer | pbcopy"
 
@@ -353,3 +411,9 @@ export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 # Gemini API
 export GEMINI_API_KEY=AIzaSyBbttyPZggV_VFOkpze_W5RPP2IqteFkNoexport PATH="$HOME/.local/bin:$PATH"
 
+export PATH="$HOME/bin:$PATH"
+
+# Claude Code management aliases
+alias claude-fix='~/bin/fix-claude-npm.sh'
+alias claude-update='~/bin/fix-claude-npm.sh'  # Same thing, different name
+alias claude-check='echo "Installed: $(claude --version 2>/dev/null || echo "Not found")" && echo "Latest: $(npm view @anthropic-ai/claude-code version)"'
